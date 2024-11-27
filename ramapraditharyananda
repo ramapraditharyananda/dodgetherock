@@ -1,0 +1,91 @@
+#include <ncurses/ncurses.h>
+#include <windows.h>
+#include <fstream>
+#include <iostream>
+#include <cstdlib>
+#include <ctime>
+#include <unistd.h>
+
+
+void menu();
+void game_loop();
+void view_score();
+void save_high_score(int score);
+int load_high_score();
+
+int main() {
+    
+    initscr();
+    noecho();
+    curs_set(0);
+    keypad(stdscr, TRUE);
+
+
+ int maxY, maxX;
+    getmaxyx(stdscr, maxY, maxX);  
+
+    int centerX = maxX / 2;
+    int centerY = maxY / 2;
+
+   
+    mvprintw(centerY - 1, centerX - 7, "SELAMAT DATANG!");
+
+    
+    int barX = centerX - 10;  
+    int barY = centerY + 1;   
+
+    
+    for (int i = 0; i < 3; i++) {
+        
+        mvprintw(barY, barX, "Loading...");
+        mvprintw(barY + 1, barX, "--------------------");
+        mvprintw(barY + 2, barX, "|                   |");
+        mvprintw(barY + 3, barX, "--------------------");
+
+       
+        for (int f = 1; f <= 18; f++) {
+mvprintw(barY + 2, barX + f, "*");
+            refresh();
+            Sleep(150); 
+        }
+
+       
+        Sleep(200);  
+        clear();      
+    }
+
+    menu();
+
+    // Akhiri ncurses
+    endwin();
+    return 0;
+}
+
+void menu() {
+    int choice;
+    while (true) {
+        clear();
+        mvprintw(5, 10, "=== DODGE THE ROCKS GAME ===");
+        mvprintw(7, 12, "1. START GAME");
+        mvprintw(8, 12, "2. VIEW SCORE");
+        mvprintw(9, 12, "3. EXIT");
+        mvprintw(11, 10, "Select an option: ");
+        refresh();
+
+        choice = getch(); // Ambil pilihan
+        switch (choice) {
+            case '1':
+                game_loop(); // Mulai game
+                break;
+            case '2':
+                view_score(); // Tampilkan skor
+                break;
+            case '3':
+                return; // Keluar dari menu
+            default:
+                mvprintw(13, 10, "Invalid choice. Press any key to try again...");
+                getch();
+                break;
+        }
+    }
+}

@@ -1,0 +1,55 @@
+
+// Ambil input pemain
+        ch = getch();
+        switch (ch) {
+            case KEY_LEFT:
+                if (player_x > 0) player_x--;
+                break;
+            case KEY_RIGHT:
+                if (player_x < max_x - 1) player_x++;
+                break;
+            case 'q': // Keluar dari game
+                if (score > high_score) save_high_score(score);
+                return;
+        }
+
+        // Tambah skor dan refresh layar
+        score++;
+
+        // Percepat kecepatan jatuh berdasarkan skor
+        if (score % 50 == 0 && speed_delay > 15000) { // Batas kecepatan minimum
+            speed_delay -= 5000; // Kurangi delay setiap 50 skor
+        }
+
+        refresh();
+        usleep(speed_delay); // Delay, memengaruhi kecepatan
+    }
+}
+
+void view_score() {
+    clear();
+    int high_score = load_high_score(); // Ambil skor tertinggi
+    mvprintw(5, 10, "=== HIGH SCORE ===");
+    mvprintw(7, 12, "High Score: %d", high_score);
+    mvprintw(9, 10, "Press any key to return to menu...");
+    refresh();
+    getch();
+}
+
+void save_high_score(int score) {
+    std::ofstream file("high_score.txt");
+    if (file.is_open()) {
+        file << score; // Simpan skor ke file
+        file.close();
+    }
+}
+
+int load_high_score() {
+    std::ifstream file("high_score.txt");
+    int score = 0;
+    if (file.is_open()) {
+        file >> score; // Baca skor dari file
+        file.close();
+    }
+    return score;
+}

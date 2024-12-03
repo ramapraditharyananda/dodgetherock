@@ -1,5 +1,3 @@
-Raffael
-
 void game_loop() {
     int max_x, max_y;
     getmaxyx(stdscr, max_y, max_x);

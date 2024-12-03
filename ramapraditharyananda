@@ -72,16 +72,16 @@ void menu() {
         mvprintw(11, 10, "Select an option: ");
         refresh();
 
-        choice = getch(); // Ambil pilihan
+        choice = getch();
         switch (choice) {
             case '1':
-                game_loop(); // Mulai game
+                game_loop();
                 break;
             case '2':
-                view_score(); // Tampilkan skor
+                view_score();
                 break;
             case '3':
-                return; // Keluar dari menu
+                return;
             default:
                 mvprintw(13, 10, "Invalid choice. Press any key to try again...");
                 getch();

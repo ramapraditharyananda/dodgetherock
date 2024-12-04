@@ -1,3 +1,64 @@
+void game_loop() {
+    int max_x, max_y;
+    getmaxyx(stdscr, max_y, max_x); 
+
+    int player_x = max_x / 2; 
+    int player_y = max_y - 2;
+    int score = 0;
+    int high_score = load_high_score();
+
+    const int num_rocks = 3;     
+    int rock_x[num_rocks], rock_y[num_rocks];
+    const int rock_width = 3;   
+    const int rock_height = 3;   
+    int speed_delay = 50000;     
+
+    srand(time(0)); 
+    for (int i = 0; i < num_rocks; i++) {
+        rock_x[i] = rand() % (max_x - rock_width);
+        rock_y[i] = rand() % (max_y / 2);
+    }
+
+    nodelay(stdscr, TRUE); 
+    int ch;
+
+    while (true) {
+        clear();
+
+        
+        mvprintw(0, 0, "Score: %d  High Score: %d", score, high_score);
+
+        
+        mvprintw(player_y, player_x, "O");
+
+        
+        for (int i = 0; i < num_rocks; i++) {
+            
+            for (int h = 0; h < rock_height; h++) {
+                for (int w = 0; w < rock_width; w++) {
+                    if (rock_y[i] + h < max_y && rock_x[i] + w < max_x) {
+                        mvprintw(rock_y[i] + h, rock_x[i] + w, "#");
+                    }
+                }
+            }
+            rock_y[i]++;
+            if (rock_y[i] >= max_y) { 
+                rock_y[i] = 0;
+                rock_x[i] = rand() % (max_x - rock_width);
+            }
+
+           
+            if (rock_y[i] <= player_y && rock_y[i] + rock_height > player_y &&
+                rock_x[i] <= player_x && rock_x[i] + rock_width > player_x) {
+                if (score > high_score) save_high_score(score);
+                mvprintw(max_y / 2, (max_x / 2) - 10, "GAME OVER! Press any key to return to menu...");
+                nodelay(stdscr, FALSE); 
+                getch();
+                return; 
+            }
+        }
+
+        
         ch = getch();
         switch (ch) {
             case KEY_LEFT:
@@ -6,24 +67,27 @@
             case KEY_RIGHT:
                 if (player_x < max_x - 1) player_x++;
                 break;
-            case 'q':
+            case 'q': 
                 if (score > high_score) save_high_score(score);
                 return;
-       }
+        }
+
+        
         score++;
 
-        if (score % 50 == 0 && speed_delay > 15000) {
-            speed_delay -= 5000;
+       
+        if (score % 50 == 0 && speed_delay > 15000) { 
+            speed_delay -= 5000; 
         }
 
         refresh();
-        usleep(speed_delay);
+        usleep(speed_delay); 
     }
 }
 
 void view_score() {
     clear();
-    int high_score = load_high_score();
+    int high_score = load_high_score(); 
     mvprintw(5, 10, "=== HIGH SCORE ===");
     mvprintw(7, 12, "High Score: %d", high_score);
     mvprintw(9, 10, "Press any key to return to menu...");
@@ -34,7 +98,7 @@ void view_score() {
 void save_high_score(int score) {
     std::ofstream file("high_score.txt");
     if (file.is_open()) {
-        file << score;
+        file << score; 
         file.close();
     }
 }
@@ -43,7 +107,7 @@ int load_high_score() {
     std::ifstream file("high_score.txt");
     int score = 0;
     if (file.is_open()) {
-        file >> score;
+        file >> score; 
         file.close();
     }
     return score;
